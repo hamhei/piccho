@@ -1,0 +1,17 @@
+application: pic-cho
+version: 1
+runtime: python
+api_version: 1
+
+handlers:
+- url: /stylesheets
+  static_dir: stylesheets
+
+- url: /img
+  static_dir: img
+
+- url: .*
+  script: main.py
+
+builtins:
+- datastore_admin: on

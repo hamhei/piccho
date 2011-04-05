@@ -1,0 +1,14 @@
+Piccho's README
+
+	1.What's Piccho?
+	  Piccho is Cloud Album objected Sharing Context for Group.
+
+	2.Usage
+	  -Create & Share #TAG with your Friends (Not need any accounts!)
+	  -Share Images with Context & Comment to Friend's on the Web.
+	  -Found yourself, You will have the Original Cloud Album :-)
+
+	3.environment
+	  -google app engine
+	  -python2.5
+	  -Django0.96

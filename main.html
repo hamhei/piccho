@@ -1,0 +1,74 @@
+<html>
+<script type="text/javascript">
+</script>
+  <head>
+	<link type="text/css" rel="stylesheet" href="/stylesheets/main.css" />
+	<script type="text/javascript">
+
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-22481852-1']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+	  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+	  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+	  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+
+		</script>
+  </head>
+  <body>
+	<div id="wrapper">
+	<a href="/"><img src="/img/piccho_logo.png"></img></a>
+	<h1>#{{ tag }}</h1>
+	<font color="ff3300">Hello, {{ name }} ^^</font>
+	<br><br>
+	this room's menbers are...
+	{% for menber in menbers %}
+	<div>- {{ menber }}</div>
+	{% endfor%}
+	<br>
+
+	<h2>INSTRUCTIONS:-)</h2>
+    1.Create & Share #TAG with your Friends (Not need any accounts!)<br>
+	2.Share Images with Context & Comment to Friend's on the Web.<br>
+	3.Found yourself, You will have the Original Cloud Album :-)<br><br>
+
+	<form action="/sign" enctype="multipart/form-data" method="post">
+      <div><input type="file" name="img"/></div>
+	  <div><textarea name="content" rows="2" cols="50"></textarea></div>
+	  <input type="hidden" name="name" value={{ name }}>
+	  <input type="hidden" name="tag" value={{ tag }}>
+      <div><input type="submit" value="Post"></div>
+    </form>
+
+
+	<br>
+	<br>
+
+
+	{% for greeting in greetings %}
+	<div><img src='img?img_id={{ greeting.key }}'></div>
+	<form action="/rmimg" method="post">
+	  <input type="hidden" name="key" value={{ greeting.key }}>
+	  <input type="submit" value="Remove">
+	</form>
+	<div><font color='ff3300'> {{ greeting.author }} ({{ greeting.date }})</font></div>
+	<div><font color='000000'> {{ greeting.content }} </font></div>
+	<form action="/comment" method="post">
+	  <div><textarea name="comment" rows="1" cols="30"></textarea></div>
+	  <input type="hidden" name="key" value={{ greeting.key }}>
+	  <div><input type="submit" value="comment"></div>
+	</form>
+    {% endfor %}
+
+	<br><br>
+
+	<div>Change Tag:</div>
+	<form action="/change" method="post">
+	  <div><textarea name="newtag" rows="1" cols="10"></textarea><input type="submit" value="change"></div>
+	</form>
+	<a href="/">Logout</a>
+	</div>
+  </body>
+</html>

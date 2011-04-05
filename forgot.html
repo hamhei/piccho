@@ -1,0 +1,29 @@
+<html>
+  <head>
+	<link type="text/css" rel="stylesheet" href="/stylesheets/main.css" />
+	<script type="text/javascript">
+
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-22481852-1']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+	  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+	  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+	  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+
+		</script>
+  </head>
+  <body>
+	<a href="/"><img src="/img/piccho_logo.png"></img></a><br>
+	<font color="ff3300">Hello, {{name}} ^^</font>
+	<br><br>
+	<div>Your #TAGs are ...</div>
+	{% for char in chars %}
+	- {{ char }}<font color="FF0000">xxxx</font><br>
+	{% endfor %}
+	<br>
+	*The Number of Characters may not be Exactly.
+  </body>
+</html>
