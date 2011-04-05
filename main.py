@@ -29,6 +29,12 @@ class Greeting(db.Model):
 	tag = db.StringProperty(multiline=False)
 	date = db.DateTimeProperty(auto_now_add=True)
 
+class Tweet(db.Model):
+	img = db.StringProperty(multiline=False)
+	content = db.StringProperty(multiline=False)
+	author = db.StringProperty(multiline=False)
+	date = db.DateTimeProperty(auto_now_add=True)
+
 class LoginPage(webapp.RequestHandler):
 	def get(self):
 		global tag, name
