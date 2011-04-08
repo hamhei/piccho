@@ -10,8 +10,13 @@ handlers:
 - url: /img
   static_dir: img
 
+- url: /favicon.ico
+  static_files: img/favicon.ico
+  upload: img/favicon.ico
+
 - url: .*
   script: main.py
 
 builtins:
 - datastore_admin: on
+
