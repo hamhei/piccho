@@ -21,7 +21,7 @@
 	<div id="wrapper">
 	<a href="/"><img src="/img/piccho_logo.png"></img></a>
 	<h1>#{{ tag }}</h1>
-	<font color="ff3300">Hello, {{ name }} ^^</font>
+	<font color="ff3300">Hello, {{ name }}</font>
 	<br><br>
 	this room's menbers are...
 	{% for menber in menbers %}
@@ -42,23 +42,26 @@
       <div><input type="submit" value="Post"></div>
     </form>
 
-
 	<br>
-	<br>
-
-
-	{% for greeting in greetings %}
-	<div><img src='img?img_id={{ greeting.key }}'></div>
-	<form action="/rmimg" method="post">
-	  <input type="hidden" name="key" value={{ greeting.key }}>
-	  <input type="submit" value="Remove">
-	</form>
-	<div><font color='ff3300'> {{ greeting.author }} ({{ greeting.date }})</font></div>
-	<div><font color='000000'> {{ greeting.content }} </font></div>
+	<h3>Comment</h3>
+	{% for ab in lists %}
+	<div><img src='img?img_id={{ ab.0.key }}'></div>
+	<div>
+	  <font color='ff3300'> {{ ab.0.author }} ({{ ab.0.date }})</font>
+	  <form action="/rmimg" method="post">
+		<input type="hidden" name="key" value={{ ab.0.key }}>
+		<input type="submit" value="Remove">
+	  </form>
+	</div>
+	{% for tweet in ab.1 %}
+	<div><font color='000000'> {{ tweet.content }}({{ tweet.author }})</font></div>
+	{% endfor %}
 	<form action="/comment" method="post">
-	  <div><textarea name="comment" rows="1" cols="30"></textarea></div>
-	  <input type="hidden" name="key" value={{ greeting.key }}>
-	  <div><input type="submit" value="comment"></div>
+	  <div><textarea name="comment" rows="1" cols="30"></textarea>
+	  <input type="hidden" name="key" value={{ ab.0.key }}>
+	  <input type="hidden" name="name" value={{ name }}>
+	  <input type="hidden" name="tag" value={{ tag }}>
+	  <input type="submit" value="comment"></div>
 	</form>
     {% endfor %}
 
