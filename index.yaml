@@ -25,3 +25,8 @@ indexes:
   - name: tag
   - name: date
     direction: desc
+
+- kind: Tweet
+  properties:
+  - name: img
+  - name: date
