@@ -24,16 +24,17 @@ name = "no name"
 
 class Greeting(db.Model):
 	author = db.StringProperty(multiline=False)
+	#when launching, remove "content" parameter
 	content = db.StringProperty(multiline=True)
 	avatar = db.BlobProperty()
 	tag = db.StringProperty(multiline=False)
 	date = db.DateTimeProperty(auto_now_add=True)
 
 class Tweet(db.Model):
-	img = db.StringProperty(multiline=False)
 	content = db.StringProperty(multiline=False)
 	author = db.StringProperty(multiline=False)
 	date = db.DateTimeProperty(auto_now_add=True)
+	img = db.StringProperty(multiline=False)
 
 class LoginPage(webapp.RequestHandler):
 	def get(self):
@@ -41,27 +42,36 @@ class LoginPage(webapp.RequestHandler):
 		tag = "no tag"
 		name = "no name"
 		path = os.path.join(os.path.dirname(__file__), 'index.html')
-		template_empty = {}
-		self.response.out.write(template.render(path, template_empty))
+		template_value = {}
+		self.response.out.write(template.render(path, template_value))
 
 class MainPage(webapp.RequestHandler):
 	def get(self):
 		global tag,name
 		#greetings = db.GqlQuery("SELECT * FROM Greeting WHERE tag = :1 ORDER BY date ASC", tag)
 		greetings = Greeting.gql("WHERE tag = :1 ORDER BY date ASC", tag)
+
+		tweets_list = []
+		for greeting in greetings:
+			temps = Tweet.gql("WHERE img = :1 ORDER BY date ASC", str(greeting.key()))
+			tweets_list.append(temps)
+
+		lists = zip(greetings, tweets_list)
+
 		names = set([])
 		for greeting in greetings:
 			names |= set([greeting.author])
 		menbers = list(names)
 		menbers.sort()
+
 		template_value = {
-			'greetings': greetings,
 			'tag': tag,
 			'name': name,
 			'menbers': menbers,
+			'lists': lists,
 			}
-		path2 = os.path.join(os.path.dirname(__file__), 'main.html')
-		self.response.out.write(template.render(path2, template_value))
+		path = os.path.join(os.path.dirname(__file__), 'main.html')
+		self.response.out.write(template.render(path, template_value))
 
 class Image (webapp.RequestHandler):
 	def get(self):
@@ -76,11 +86,11 @@ class Guestbook(webapp.RequestHandler):
 	def post(self):
 		global tag,name
 		greeting = Greeting()
+		#bug.... sometime missing tag and name.  why?
+		tag = self.request.get("tag")
+		name = self.request.get("name")
 		greeting.tag = tag
 		greeting.author = name
-		#bug.... sometime missing tag and name.  why?
-		 #fix ed!!
-		greeting.content = self.request.get("content") + " (by " + name + ")"
 		bin=db.Blob(self.request.get("img"))
 		content_type, width, height = getImageInfo(bin)
 		if width > 600:
@@ -89,22 +99,28 @@ class Guestbook(webapp.RequestHandler):
 			avatar = self.request.get("img")
 		greeting.avatar = db.Blob(avatar)
 		greeting.put()
+
+		tweet = Tweet()
+		tweet.img = str(greeting.key())
+		tweet.content = self.request.get("content")
+		tweet.author = name
+		tweet.put()
+
 		self.redirect('/main')
 
 class Phrase(webapp.RequestHandler):
 	def post(self):
 		global tag,name
-		tag = self.request.get("tag")
+		if self.request.get("tag"):
+			tag = self.request.get("tag")
 		if self.request.get("name"):
 			name = self.request.get("name")
-		else:
-			name = "no name"
 		self.redirect('/main')
 
 class Change(webapp.RequestHandler):
 	def post(self):
 		global tag
-		greetings = Greeting.gql("WHERE tag = :1 ORDER BY date ASC", tag)
+		greetings = Greeting.gql("WHERE tag = :1", tag)
 		for greeting in greetings:
 			greeting.tag = self.request.get("newtag")
 			greeting.put()
@@ -114,9 +130,13 @@ class Change(webapp.RequestHandler):
 class Comment(webapp.RequestHandler):
 	def post(self):
 		global tag, name
-		greeting = db.get(self.request.get("key"))
-		greeting.content = greeting.content + "<br>  " + self.request.get("comment") + " (by " + name + ")"
-		greeting.put()
+		name = self.request.get("name")
+		tag = self.request.get("tag")
+		tweet = Tweet()
+		tweet.img = str(self.request.get("key"))
+		tweet.content = self.request.get("comment")
+		tweet.author = name
+		tweet.put()
 		self.redirect('/main')
 
 class Forgot(webapp.RequestHandler):
@@ -126,20 +146,25 @@ class Forgot(webapp.RequestHandler):
 		for greeting in greetings:
 			tags |= set([greeting.tag])
 		chars = []
+		length =[]
 		for t in tags:
 			chars.append(t[:2])
+			length.append( "x" * (len(t)-2))
+		lists = zip(chars, length)
 		template_value = {
 			'name': self.request.get("name"),
 			'tags': tags,
-			'chars': chars,
+			'lists': lists,
 			}
-		path2 = os.path.join(os.path.dirname(__file__), 'forgot.html')
-		self.response.out.write(template.render(path2, template_value))
+		path = os.path.join(os.path.dirname(__file__), 'forgot.html')
+		self.response.out.write(template.render(path, template_value))
 
 class Rmimg(webapp.RequestHandler):
 	def post(self):
 		greeting = db.get(self.request.get("key"))
+		tweets = Tweet.gql("WHERE img = :1 ", str(self.request.get("key")))
 		db.delete(greeting)
+		db.delete(tweets)
 		self.redirect("/main")
 
 application = webapp.WSGIApplication([

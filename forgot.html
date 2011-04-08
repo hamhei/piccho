@@ -20,8 +20,8 @@
 	<font color="ff3300">Hello, {{name}} ^^</font>
 	<br><br>
 	<div>Your #TAGs are ...</div>
-	{% for char in chars %}
-	- {{ char }}<font color="FF0000">xxxx</font><br>
+	{% for ab in lists %}
+	- {{ ab.0 }}<font color="FF0000">{{ ab.1 }}</font><br>
 	{% endfor %}
 	<br>
 	*The Number of Characters may not be Exactly.
