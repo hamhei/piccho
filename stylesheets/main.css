@@ -10,3 +10,45 @@ div#wrapper {
   border-radius: 5px;
   padding: 0px 15px;
 }
+
+div#img {
+  width: 100% - 100px;
+  height: auto;
+  background-color: #FFFFFF;
+  border: thin #666666 solid;
+  padding: 15px 15px;
+  margin: 10px 50px;
+}
+
+div#list {
+  text-align: right;
+  margin: 5px 10px;
+}
+div#list ul {
+  font-size: 14px;
+  font-family: Georgia, Times, serif;
+}
+div#list ul li {
+  display: inline;
+}
+div#list li{ margin: 0px 5px; }
+div#list ul li:after {}
+div#list ul li.last:after {}
+
+div#menu {
+  width: 100% - 100px;
+  height: auto;
+  padding: 15px 15px;
+  margin: 10px 50px;
+  font-weight: bold;
+  font-family: Georgia, Times, serif;
+}
+
+div#inst {
+  width: 100% - 100px;
+  height: auto;
+  padding: 15px 15px;
+  margin: 10px 50px;
+  font-weight: bold;
+}
+
