@@ -23,13 +23,13 @@
 	<h1>#{{ tag }}</h1>
 	<font color="ff3300">Hello, {{ name }}</font>
 	<br><br>
-	this room's menbers are...
+	this room's menbers:
 	{% for menber in menbers %}
 	<div>- {{ menber }}</div>
 	{% endfor%}
 	<br>
 
-	<h2>INSTRUCTIONS:-)</h2>
+	<h3>INSTRUCTIONS:-)</h3>
     1.Create & Share #TAG with your Friends (Not need any accounts!)<br>
 	2.Share Images with Context & Comment to Friend's on the Web.<br>
 	3.Found yourself, You will have the Original Cloud Album :-)<br><br>
@@ -43,13 +43,14 @@
     </form>
 
 	<br>
-	<h3>Comment</h3>
 	{% for ab in lists %}
-	<div><img src='img?img_id={{ ab.0.key }}'></div>
+	<div><img src='http://pic-cho.appspot.com/img?img_id={{ ab.0.key }}'></div>
 	<div>
 	  <font color='ff3300'> {{ ab.0.author }} ({{ ab.0.date }})</font>
 	  <form action="/rmimg" method="post">
 		<input type="hidden" name="key" value={{ ab.0.key }}>
+		<input type="hidden" name="name" value={{ name }}>
+		<input type="hidden" name="tag" value={{ tag }}>
 		<input type="submit" value="Remove">
 	  </form>
 	</div>
@@ -69,6 +70,8 @@
 
 	<div>Change Tag:</div>
 	<form action="/change" method="post">
+	  <input type="hidden" name="name" value={{ name }}>
+	  <input type="hidden" name="tag" value={{ tag }}>
 	  <div><textarea name="newtag" rows="1" cols="10"></textarea><input type="submit" value="change"></div>
 	</form>
 	<a href="/">Logout</a>

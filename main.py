@@ -19,8 +19,8 @@ from getimageinfo import getImageInfo
 #use_library('django', '1.2')
 #os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 logging.getLogger().setLevel(logging.DEBUG)
-tag = "no tag"
-name = "no name"
+#tag = "no tag"
+#name = "no name"
 
 class Greeting(db.Model):
 	author = db.StringProperty(multiline=False)
@@ -38,17 +38,20 @@ class Tweet(db.Model):
 
 class LoginPage(webapp.RequestHandler):
 	def get(self):
-		global tag, name
-		tag = "no tag"
-		name = "no name"
+  # global tag, name
+	#	tag = "no tag"
+	#	name = "no name"
 		path = os.path.join(os.path.dirname(__file__), 'index.html')
 		template_value = {}
 		self.response.out.write(template.render(path, template_value))
 
 class MainPage(webapp.RequestHandler):
-	def get(self):
-		global tag,name
-		#greetings = db.GqlQuery("SELECT * FROM Greeting WHERE tag = :1 ORDER BY date ASC", tag)
+	def get(self, tag, name):
+		#global tag,name
+		#greetings = db.GqlQery("SELECT * FROM Greeting WHERE tag = :1 ORDER BY date ASC", tag)
+		#tag = self.get.request('tag')
+		#name = self.get.request('name')
+
 		greetings = Greeting.gql("WHERE tag = :1 ORDER BY date ASC", tag)
 
 		tweets_list = []
@@ -84,7 +87,7 @@ class Image (webapp.RequestHandler):
 
 class Guestbook(webapp.RequestHandler):
 	def post(self):
-		global tag,name
+		#global tag,name
 		greeting = Greeting()
 		#bug.... sometime missing tag and name.  why?
 		tag = self.request.get("tag")
@@ -106,30 +109,30 @@ class Guestbook(webapp.RequestHandler):
 		tweet.author = name
 		tweet.put()
 
-		self.redirect('/main')
+		self.redirect('/main/'+tag+'/'+name)
 
 class Phrase(webapp.RequestHandler):
 	def post(self):
-		global tag,name
-		if self.request.get("tag"):
-			tag = self.request.get("tag")
-		if self.request.get("name"):
-			name = self.request.get("name")
-		self.redirect('/main')
+		#global tag,name
+		tag = self.request.get("tag", default_value="no tag")
+		name = self.request.get("name", default_value="no name")
+		self.redirect('/main/'+tag+'/'+name)
 
 class Change(webapp.RequestHandler):
 	def post(self):
-		global tag
+		#global tag
+		tag = self.request.get("tag")
+		name = self.request.get("name")
 		greetings = Greeting.gql("WHERE tag = :1", tag)
 		for greeting in greetings:
 			greeting.tag = self.request.get("newtag")
 			greeting.put()
-			tag = self.request.get("newtag")
-		self.redirect('/main')
+		tag = self.request.get("newtag")
+		self.redirect('/main/'+tag+'/'+name)
 
 class Comment(webapp.RequestHandler):
 	def post(self):
-		global tag, name
+		#global tag, name
 		name = self.request.get("name")
 		tag = self.request.get("tag")
 		tweet = Tweet()
@@ -137,10 +140,12 @@ class Comment(webapp.RequestHandler):
 		tweet.content = self.request.get("comment")
 		tweet.author = name
 		tweet.put()
-		self.redirect('/main')
+		self.redirect('/main/'+tag+'/'+name)
 
 class Forgot(webapp.RequestHandler):
 	def post(self):
+		tag = self.request.get("tag")
+		name = self.request.get("name")
 		greetings = Greeting.gql("WHERE author = :1 ORDER BY date ASC", self.request.get("name"))
 		tags = set([])
 		for greeting in greetings:
@@ -161,15 +166,17 @@ class Forgot(webapp.RequestHandler):
 
 class Rmimg(webapp.RequestHandler):
 	def post(self):
+		tag = self.request.get("tag")
+		name = self.request.get("name")
 		greeting = db.get(self.request.get("key"))
 		tweets = Tweet.gql("WHERE img = :1 ", str(self.request.get("key")))
 		db.delete(greeting)
 		db.delete(tweets)
-		self.redirect("/main")
+		self.redirect('/main/'+tag+'/'+name)
 
 application = webapp.WSGIApplication([
 		('/', LoginPage),
-		('/main', MainPage),
+		('/main/([^/]*)/?(.*)', MainPage),
 		('/img', Image),
 		('/sign', Guestbook),
 		('/phrase', Phrase),
