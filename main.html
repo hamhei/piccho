@@ -2,6 +2,8 @@
 <script type="text/javascript">
 </script>
   <head>
+	<title>Pic-cho ~Create Your Cloud Album~</title>
+	<meta name="viewport" content="width=device-width, user-scalable=no, maximum-scale=1"/>
 	<link type="text/css" rel="stylesheet" href="/stylesheets/main.css" />
 	<script type="text/javascript">
 
@@ -18,74 +20,92 @@
 		</script>
   </head>
   <body>
+	<div id="wrapper">
 	<div id="list">
-	  <form action="/change" method="post">
+	  <form action="/pass" method="post">
 	<ul>
 	  <li>
-		Change Tag:
-		  <input type="hidden" name="name" value={{ name }}>
-		  <input type="hidden" name="tag" value={{ tag }}>
-		  <textarea name="newtag" rows="1" cols="10"></textarea><input type="submit" value="change">
+		<img src="/img/user.jpg" width=20>{{ name }}#{{ tag }}</img>
 	  </li>
-	  &nbsp; &nbsp;
 	  <li>
-	  	<a href="/">Logout</a>
+		{% if isPass %}
+		<img src="/img/unlock.jpg" width=20></img>
+		password: <textarea name="pass" rows="1" cols="10"></textarea><input type="submit" value="Lock">
+		{% else %}
+		<img src="/img/lock.jpg" width=20></img><input type="submit" value="Unlock">
+		{% endif %}
+	  </li>
+	  <li>
+	  	<a href="/"><img src="/img/logout.jpg" width=30></img></a>
 	  </li>
 	</ul>
 		</form>
 	</div>
 
 	<div id="menu">
-	<a href="/"><img src="/img/piccho_logo.png"></img></a>
-	<h1>#{{ tag }}</h1>
-	<font color="ff3300">Hello, {{ name }}</font>
+	<a href="/"><img src="/img/piccho_logo.png" border="0"></img></a>
+	<form action="/change" method="post">
+	<h1>
+	  {% if not isPass %} <img src="/img/lock.jpg" width=20></img>{% endif %}
+	  #{{ tag|striptags }}
+	  <textarea name="pass" rows="1" cols="10"> </textarea><input type="submit" value="Modify">
+	</h1>
+	</form>
+	<font color="ff3300">Hello, {{ name|striptags }}</font>
 	<br><br>
 	this room's members:
-	{% for menber in menbers %}
-	<div>- {{ menber }}</div>
+	{% for member in members %}
+	<div>- {{ member|striptags }}</div>
 	{% endfor%}
 	</div>
 
 	<div id="menu">
-	<h3>INSTRUCTIONS:-)</h3>
-    1.Create & Share #TAG with your Friends (Not need any accounts!)<br>
-	2.Share Images with Context & Comment to Friend's on the Web.<br>
-	3.Found yourself, You will have the Original Cloud Album :-)<br><br>
-
+	  <h3>INSTRUCTIONS:-)</h3>
+      <img src="/img/piccho_illust.jpg"><br>
+	  <font color="666666">
+		1.Share #TAG with your Friends (No Sign up)<br>
+		2.Edit Images & Comments on the Web.<br>
+		3.You will get Your Original Web Album :-)<br><br>
 	<form action="/sign" enctype="multipart/form-data" method="post">
       <div><input type="file" name="img"/></div>
 	  <div><textarea name="content" rows="2" cols="50"></textarea></div>
-	  <input type="hidden" name="name" value={{ name }}>
-	  <input type="hidden" name="tag" value={{ tag }}>
       <div><input type="submit" value="Post"></div>
     </form>
-	</div>
 
 	<br>
+	<div align="right">
+	<form action="/order" method="post">
+	  Order:
+	  <select name="order">
+		<option value="modify">New Modify
+		<option value="new">New Pic
+		<option value="old">Old Pic
+	  </select>
+	</form>
+	</div>
+	</div>
+
 	{% for ab in lists %}
 	<div id="img">
 	<div><img src='http://pic-cho.appspot.com/img?img_id={{ ab.0.key }}'></div>
 	<div>
-	  <font color='ff3300'> {{ ab.0.author }} ({{ ab.0.date }})</font>
+	  <font color='ff3300'> {{ ab.0.author|striptags }} ({{ ab.0.date }})</font>
 	  <form action="/rmimg" method="post">
 		<input type="hidden" name="key" value={{ ab.0.key }}>
-		<input type="hidden" name="name" value={{ name }}>
-		<input type="hidden" name="tag" value={{ tag }}>
 		<input type="submit" value="Remove">
 	  </form>
 	</div>
 	{% for tweet in ab.1 %}
-	<div><font color='000000'> {{ tweet.content }}({{ tweet.author }})</font></div>
+	<div id="comment"><font color='000000'> {{ tweet.content|striptags }}({{ tweet.author|striptags }})</font></div>
 	{% endfor %}
 	<form action="/comment" method="post">
 	  <div><textarea name="comment" rows="1" cols="30"></textarea>
 	  <input type="hidden" name="key" value={{ ab.0.key }}>
-	  <input type="hidden" name="name" value={{ name }}>
-	  <input type="hidden" name="tag" value={{ tag }}>
 	  <input type="submit" value="comment"></div>
 	</form>
 	</div>
     {% endfor %}
 	<br>
+	</div>
   </body>
 </html>

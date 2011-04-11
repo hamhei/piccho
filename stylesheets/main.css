@@ -4,20 +4,26 @@ body {
 }
 
 div#wrapper {
-  width: 100% - 30px;
+  width: 600px + 100px;
   height: auto;
   background-color: #FFFFFF;
   border-radius: 5px;
   padding: 0px 15px;
+  margin: 0px 50px;
 }
 
 div#img {
-  width: 100% - 100px;
+  width: auto;
   height: auto;
   background-color: #FFFFFF;
   border: thin #666666 solid;
   padding: 15px 15px;
-  margin: 10px 50px;
+  margin: 10px 0px;
+}
+
+div#comment {
+  border-bottom: thin #666666 solid;
+  margin-bottom: 5px;
 }
 
 div#list {
@@ -31,24 +37,24 @@ div#list ul {
 div#list ul li {
   display: inline;
 }
-div#list li{ margin: 0px 5px; }
+div#list li{ margin: 0px 10px; }
 div#list ul li:after {}
 div#list ul li.last:after {}
 
 div#menu {
-  width: 100% - 100px;
+  width: auto;
   height: auto;
   padding: 15px 15px;
-  margin: 10px 50px;
+  margin: 10px 0px;
   font-weight: bold;
   font-family: Georgia, Times, serif;
 }
 
 div#inst {
-  width: 100% - 100px;
+  width: auto;
   height: auto;
   padding: 15px 15px;
-  margin: 10px 50px;
+  margin: 10px 0px;
   font-weight: bold;
 }
 
