@@ -6,6 +6,7 @@ import logging
 import os
 import math
 import appengine_utilities.sessions
+import datetime
 
 from google.appengine.dist import use_library
 from google.appengine.ext import db
@@ -23,19 +24,19 @@ from appengine_utilities.sessions import Session
 logging.getLogger().setLevel(logging.DEBUG)
 #tag = "no tag"
 #name = "no name"
-session = Session()
+#session = Session()
 
 class Greeting(db.Model):
 	author = db.StringProperty(multiline=False)
 	#when launching, remove "content" parameter
-	content = db.StringProperty(multiline=True)
+	#content = db.StringProperty(multiline=True)
 	avatar = db.BlobProperty()
 	tag = db.StringProperty(multiline=False)
 	date = db.DateTimeProperty(auto_now_add=True)
-	#modify = db.DateTimeProperty()
+	modify = db.DateTimeProperty()
 
 class Tweet(db.Model):
-	content = db.StringProperty(multiline=False)
+	content = db.StringProperty(multiline=True)
 	author = db.StringProperty(multiline=False)
 	date = db.DateTimeProperty(auto_now_add=True)
 	img = db.StringProperty(multiline=False)
@@ -46,17 +47,20 @@ class Room(db.Model):
 
 class LoginPage(webapp.RequestHandler):
 	def get(self):
-		#session.delete()
+		session = Session()
 		session["name"] = "no name"
-		session["pass"] = "no pass"
+		session["tag"] = ""
+		session["pass"] = ""
 		path = os.path.join(os.path.dirname(__file__), 'index.html')
 		template_value = {}
 		self.response.out.write(template.render(path, template_value))
 
 class Phrase(webapp.RequestHandler):
 	def post(self):
+		session = Session()
 		if len(self.request.get("tag")) > 0:
 			session["tag"] = self.request.get("tag")
+		if len(self.request.get("name")) > 0:
 			session["name"] = self.request.get("name")
 		room = Room.get_or_insert(session["tag"])
 		room.put()
@@ -64,11 +68,13 @@ class Phrase(webapp.RequestHandler):
 
 class Check(webapp.RequestHandler):
 	def post(self):
+		session = Session()
 		session["pass"] = self.request.get("pass")
 		self.redirect('/main')
 
 class MainPage(webapp.RequestHandler):
 	def get(self):
+		session = Session()
 		if 'tag' in session:
 			pass
 		else:
@@ -108,6 +114,7 @@ class MainPage(webapp.RequestHandler):
 
 class Image (webapp.RequestHandler):
 	def get(self):
+		session = Session()
 		greeting = db.get(self.request.get("img_id"))
 		if greeting.avatar:
 			self.response.headers['Content-Type'] = "image/png"
@@ -117,16 +124,17 @@ class Image (webapp.RequestHandler):
 
 class Guestbook(webapp.RequestHandler):
 	def post(self):
+		session = Session()
 		greeting = Greeting()
 		#bug.... sometime missing tag and name.  why?
 		greeting.tag = session["tag"]
 		greeting.author = session["name"]
-		bin=db.Blob(self.request.get("img"))
-		content_type, width, height = getImageInfo(bin)
-		if width > 600:
-			avatar = images.resize(self.request.get("img"), width=600)
-		else:
-			avatar = self.request.get("img")
+		#bin=db.Blob(self.request.get("img"))
+		#content_type, width, height = getImageInfo(bin)
+		#if width > 600:
+		avatar = images.resize(self.request.get("img"), width=600)
+		#else:
+		#	avatar = self.request.get("img")
 		greeting.avatar = db.Blob(avatar)
 		greeting.put()
 
@@ -140,24 +148,38 @@ class Guestbook(webapp.RequestHandler):
 
 class Change(webapp.RequestHandler):
 	def post(self):
+		session = Session()
 		greetings = Greeting.gql("WHERE tag = :1", tag)
 		for greeting in greetings:
 			greeting.tag = self.request.get("newtag")
 			greeting.put()
+
+		room = Room.get_or_insert(session["tag"])
+		db.delete(room)
+		newroom = Room.get_or_insert(self.request.get("newtag"))
+		newroom.put()
+
 		session["tag"] = self.request.get("newtag")
 		self.redirect('/main')
 
 class Comment(webapp.RequestHandler):
 	def post(self):
+		session = Session()
 		tweet = Tweet()
 		tweet.img = str(self.request.get("key"))
 		tweet.content = self.request.get("comment")
 		tweet.author = session["name"]
 		tweet.put()
+
+		greeting = db.get(self.request.get("key"))
+		greeting.modify = datetime.datetime.now()
+		greeting.put()
+
 		self.redirect('/main')
 
 class Forgot(webapp.RequestHandler):
 	def post(self):
+		session = Session()
 		greetings = Greeting.gql("WHERE author = :1", self.request.get("name"))
 		tags = set([])
 		for greeting in greetings:
@@ -177,6 +199,7 @@ class Forgot(webapp.RequestHandler):
 
 class Pass(webapp.RequestHandler):
 	def post(self):
+		session = Session()
 		room = Room.get_or_insert(session["tag"])
 		room.isPass = not room.isPass
 		if not room.isPass:
@@ -187,14 +210,23 @@ class Pass(webapp.RequestHandler):
 
 class Order(webapp.RequestHandler):
 	def post(self):
+		session = Session()
 		self.redirect('/main')
 
 class Rmimg(webapp.RequestHandler):
 	def post(self):
+		session = Session()
 		greeting = db.get(self.request.get("key"))
 		tweets = Tweet.gql("WHERE img = :1 ", str(self.request.get("key")))
 		db.delete(greeting)
 		db.delete(tweets)
+		self.redirect('/main')
+
+class Rmtweet(webapp.RequestHandler):
+	def post(self):
+		session = Session()
+		tweet = db.get(self.request.get("key"))
+		db.delete(tweet)
 		self.redirect('/main')
 
 application = webapp.WSGIApplication([
@@ -209,7 +241,8 @@ application = webapp.WSGIApplication([
 		('/pass', Pass),
 		('/order', Order),
 		('/rmimg', Rmimg),
-		('/check', Check)
+		('/check', Check),
+		('/rmtweet', Rmtweet)
 		], debug=True)
 
 def main():
