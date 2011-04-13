@@ -1,10 +1,10 @@
 body {
   font-family: Verdana, Helvetica, sans-serif;
-  background-color: #FFFF33;
+  background-color: #202020;
 }
 
 div#wrapper {
-  width: 600px + 100px;
+  width: 100% - 100px;
   height: auto;
   background-color: #FFFFFF;
   border-radius: 5px;
@@ -12,23 +12,40 @@ div#wrapper {
   margin: 0px 50px;
 }
 
+div#intro{
+  width: 100%;
+  margin: 10px 0px;
+  margin-right: 20px;
+}
+
+div#intro img{
+  max-width: 450px;
+  width: 100%;
+}
+
 div#img {
-  width: auto;
+  width: 100% - 30px;
   height: auto;
   background-color: #FFFFFF;
   border: thin #666666 solid;
-  padding: 15px 15px;
-  margin: 10px 0px;
+  padding: 0px 10px;
+  padding-top: 10px;
+  margin: 10px 15px;
+}
+
+div#img img{
+  max-width: 600px;
+  width: 100%;
 }
 
 div#comment {
   border-bottom: thin #666666 solid;
-  margin-bottom: 5px;
+  margin-bottom: 8px;
 }
 
 div#list {
   text-align: right;
-  margin: 5px 10px;
+  margin: 10px 10px;
 }
 div#list ul {
   font-size: 14px;
