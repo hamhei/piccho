@@ -2,9 +2,15 @@
 <script type="text/javascript">
 </script>
   <head>
-	<title>Pic-cho ~Create Your Cloud Album~</title>
+	<title><p id="update"></p>Pic-cho ~Create Your Cloud Album~</title>
 	<meta name="viewport" content="width=device-width, user-scalable=no, maximum-scale=1"/>
 	<link type="text/css" rel="stylesheet" href="/stylesheets/main.css" />
+	<script type="text/javascript" src="js/jquery.js"></script>
+	<script type="text/javascript" src="js/piccho.js">
+	  setInterval("updateCheck()", 30000)
+	  function updateCheck(){
+	  }
+	</script>
 	<script type="text/javascript">
 
 	  var _gaq = _gaq || [];
@@ -20,17 +26,18 @@
 		</script>
   </head>
   <body>
+	<p id="notify" bg-color="ff0000"></p>
 	<div id="wrapper">
 	<div id="list">
 	  <form action="/pass" method="post">
 	<ul>
 	  <li>
-		<img src="/img/user.jpg" width=20>{{ name }}#{{ tag }}</img>
+		<img src="/img/user.jpg" width=20><font color="ff0000">hello, <b>{{ name }}</b></font></img>
 	  </li>
 	  <li>
 		{% if isPass %}
 		<img src="/img/unlock.jpg" width=20></img>
-		password: <textarea name="pass" rows="1" cols="10"></textarea><input type="submit" value="Lock">
+		password: <input type="text" name="pass" size="10"><input type="submit" value="Lock">
 		{% else %}
 		<img src="/img/lock.jpg" width=20></img><input type="submit" value="Unlock">
 		{% endif %}
@@ -43,16 +50,17 @@
 	</div>
 
 	<div id="menu">
-	<a href="/"><img src="/img/piccho_logo.png" border="0"></img></a>
+	<div id="logo">
+	  <a href="/"><img src="/img/piccho_logo.jpg" border="0"></img></a>
+	  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://pic-cho.appspot.com/" data-count="horizontal">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+	</div>
 	<form action="/change" method="post">
 	<h1>
 	  {% if not isPass %} <img src="/img/lock.jpg" width=20></img>{% endif %}
 	  #{{ tag|striptags }}
-	  <textarea name="pass" rows="1" cols="10"> </textarea><input type="submit" value="Modify">
+	  <input type="text" name="pass" size="10"><input type="submit" value="Modify">
 	</h1>
 	</form>
-	<font color="ff3300">Hello, {{ name|striptags }}</font>
-	<br><br>
 	this room's members:
 	{% for member in members %}
 	<div>- {{ member|striptags }}</div>
@@ -61,18 +69,17 @@
 
 	<div id="menu">
 	  <h3>INSTRUCTIONS:-)</h3>
-      <img src="/img/piccho_illust.jpg"><br>
+      <div id="intro"><img src="/img/piccho_intro.jpg"></div>
 	  <font color="666666">
 		1.Share #TAG with your Friends (No Sign up)<br>
 		2.Edit Images & Comments on the Web.<br>
 		3.You will get Your Original Web Album :-)<br><br>
 	<form action="/sign" enctype="multipart/form-data" method="post">
       <div><input type="file" name="img"/></div>
-	  <div><textarea name="content" rows="2" cols="50"></textarea></div>
+	  <div><textarea name="content" rows="2" cols="30"></textarea></div>
       <div><input type="submit" value="Post"></div>
     </form>
 
-	<br>
 	<div align="right">
 	<form action="/order" method="post">
 	  Order:
@@ -89,14 +96,21 @@
 	<div id="img">
 	<div><img src='http://pic-cho.appspot.com/img?img_id={{ ab.0.key }}'></div>
 	<div>
-	  <font color='ff3300'> {{ ab.0.author|striptags }} ({{ ab.0.date }})</font>
 	  <form action="/rmimg" method="post">
+		<font color='ff3300'> {{ ab.0.author|striptags }} ({{ ab.0.date }})</font>
 		<input type="hidden" name="key" value={{ ab.0.key }}>
+		<a href="http://twitter.com/share" class="twitter-share-button" data-url="http://pic-cho.appspot.com/img?img_id={{ ab.0.key }}" data-count="horizontal" data-via="hamhei" data-related="pic_cho">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
 		<input type="submit" value="Remove">
 	  </form>
 	</div>
 	{% for tweet in ab.1 %}
-	<div id="comment"><font color='000000'> {{ tweet.content|striptags }}({{ tweet.author|striptags }})</font></div>
+	<form action="/rmtweet" method="post">
+	  <div id="comment">
+	  {{ tweet.content|striptags }}<font color="666666">({{ tweet.author|striptags }})</font>
+	  <input type="hidden" name="key" value={{ tweet.key }}>
+	  <input type="submit" value="Remove">
+	  </div>
+	</form>
 	{% endfor %}
 	<form action="/comment" method="post">
 	  <div><textarea name="comment" rows="1" cols="30"></textarea>

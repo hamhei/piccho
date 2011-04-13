@@ -4,6 +4,7 @@
 	<title>Pic-cho ~Create Your Cloud Album~</title>
 	<meta name="viewport" content="width=device-width, user-scalable=no, maximum-scale=1"/>
 	<link type="text/css" rel="stylesheet" href="/stylesheets/main.css" />
+	<script type="text/javascript" src="jquery.js"></script>
 	<script type="text/javascript">
 	    if ((navigator.userAgent.indexOf('iPhone') > 0 && navigator.userAgent.indexOf('iPad') == -1) || navigator.userAgent.indexOf('iPod') > 0 || navigator.userAgent.indexOf('Android') > 0 ) {
 		<meta name="viewport" content="width=320, user-scalable=no, maximum-scale=1"/>
@@ -24,30 +25,32 @@
 	</script>
   </head>
   <body>
-	<div id="wrapper">
-    <a href="/"><img src="/img/piccho_logo.png" border="0"></img></a>
+	<div id="wrapper"><br>
+    <div id="logo">
+	  <a href="/"><img src="/img/piccho_logo.jpg" border="0"></img></a>
+	  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://pic-cho.appspot.com/" data-count="horizontal">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+	  </div>
 	<h3>Let's Create Web Album!!</h3>
 	<form action="/phrase" method="post">
-	  <h5>TAG</h5>
-	  <div>#<textarea name="tag" rows="1" cols="30"></textarea></div>
-	  <h5>Your Name(opt)</h5>
-	  <div><textarea name="name" rows="1" cols="10"></textarea></div>
+	  <b>TAG</b>
+	  <div>#<input type="text" name="tag" size="15"></div>
+	  <b>Your Name(opt)</b>
+	  <div><input type="text" name="name" size="10"></div>
 	  <div><input type="submit" value="Join" wrap="off"></div>
 	</form>
-	<br>
     <h3>Usage</h3>
-	<img src="/img/piccho_illust.jpg"><br>
+	<div id="intro"><img src="/img/piccho_intro.jpg"></div>
 	<font color="666666">
 	1.Share #TAG with your Friends (No Sign up)<br>
 	2.Edit Images & Comments on the Web.<br>
-	3.You will get Your Original Web Album :-)<br><br>
+	3.You will get Your Original Web Album :-)<br>
 	*Enable: PC, Cellphone, Android, iPhone
 	</font>
 
-	<br><br>
+	<br><br><br>
 	<form action="/forgot" method="post">
-	  <font color="ffffff">If you forget #TAGs, input your name</font>
-	  <div><textarea name="name" rows="1" cols="10"></textarea><input type="submit" value="Search"></div>
+	  <font color="666666" size = "-1">If you forget #TAGs, input your name</font>
+	  <div><input type="text" name="name" size="10"><input type="submit" value="Search"></div>
 	</form>
 	</div>
   </body>
